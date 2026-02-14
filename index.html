@@ -5,12 +5,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Una sorpresa para ti 💌</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
+<!-- Montserrat Bold -->
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap" rel="stylesheet">
 
 <style>
 body {
     margin: 0;
-    font-family: Arial, sans-serif;
+    font-family: 'Montserrat', sans-serif;
     overflow: hidden;
     background: linear-gradient(135deg, #ff4d6d, #ff8fab);
 }
@@ -49,7 +50,6 @@ body {
     z-index: 5;
     background: white;
     color: #e91e63;
-    font-family: 'Great Vibes', cursive;
 }
 
 #countdown {
@@ -89,11 +89,19 @@ button {
     border-radius: 12px;
     cursor: pointer;
     margin: 10px;
-    transition: 0.1s linear;
+    transition: 0.2s;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
 }
 
 #yesBtn { background: #28c76f; color: white; }
-#noBtn  { background: #ff3b30; color: white; position: absolute; }
+#noBtn  { background: #ff3b30; color: white; }
+
+#noMessage {
+    margin-top: 15px;
+    font-size: 1.2em;
+    color: #e91e63;
+}
 
 #successScreen {
     background: radial-gradient(circle, #ff4d6d, #000000);
@@ -101,7 +109,8 @@ button {
 }
 
 .final-message {
-    font-family: 'Great Vibes', cursive;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
     font-size: 2.5em;
     opacity: 0;
     transform: scale(0.5);
@@ -142,9 +151,10 @@ button {
 
 <div class="screen" id="mainScreen">
     <div class="box">
-        <h1 style="font-family:'Great Vibes', cursive;">¿Quieres ser mi Valentine? 💖</h1>
+        <h1>¿Quieres ser mi Valentine? 💖</h1>
         <button id="yesBtn">Sí 💘</button>
         <button id="noBtn">No 😅</button>
+        <div id="noMessage"></div>
     </div>
 </div>
 
@@ -158,6 +168,8 @@ button {
             Vamos a comer-nos 😏<br><br>
             <span style="font-size:0.8em;">¡Ups! así no era 😅</span>
         </div>
+        <!-- GIF de gatito bailando -->
+        <img src="https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExMWdnaW02OGxxdHBrdjhyM2dmb3dpZXd6cW5zNnkzYjdqOXF4cXh0aSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/vPzbDN4rBxuvtpSpzF/giphy.gif" alt="Gatito bailando" style="width:150px; margin-top:20px;">
     </div>
 </div>
 
@@ -172,68 +184,44 @@ function createBackgroundHeart() {
     heart.style.fontSize = (15 + Math.random() * 30) + "px";
     heart.style.animationDuration = (4 + Math.random() * 4) + "s";
     bgContainer.appendChild(heart);
-
     setTimeout(() => heart.remove(), 8000);
 }
 
 setInterval(createBackgroundHeart, 250);
 
-/* Cuenta regresiva */
 let count = 3;
 const countdown = document.getElementById("countdown");
 const intro = document.getElementById("intro");
 const mainScreen = document.getElementById("mainScreen");
 const noBtn = document.getElementById("noBtn");
+const noMessage = document.getElementById("noMessage");
 
 const timer = setInterval(() => {
     count--;
     countdown.innerText = count;
-
     if (count === 0) {
         clearInterval(timer);
         intro.style.display = "none";
         mainScreen.style.display = "flex";
         document.body.style.overflow = "auto";
-        // posición inicial del NO
-        noBtn.style.left = "50px";
-        noBtn.style.top = "150px";
     }
 }, 1000);
 
-/* Botón NO sigue el dedo o cursor */
-function moveAway(targetX, targetY) {
-    const btnRect = noBtn.getBoundingClientRect();
-    const padding = 20;
+/* Mensajes al tocar NO */
+const messages = [
+    "¿Estás segura? 😅",
+    "Vamos, piénsalo bien... 😳",
+    "Última oportunidad 😾"
+];
+let noClickCount = 0;
 
-    let btnX = btnRect.left;
-    let btnY = btnRect.top;
-
-    let dx = btnX + btnRect.width/2 - targetX;
-    let dy = btnY + btnRect.height/2 - targetY;
-    let dist = Math.sqrt(dx*dx + dy*dy);
-
-    // Si está cerca, moverse
-    if(dist < 100) {
-        let moveX = (dx/dist) * 120; 
-        let moveY = (dy/dist) * 120;
-
-        let newX = Math.min(Math.max(btnX + moveX, padding), window.innerWidth - btnRect.width - padding);
-        let newY = Math.min(Math.max(btnY + moveY, padding), window.innerHeight - btnRect.height - padding);
-
-        noBtn.style.left = newX + "px";
-        noBtn.style.top = newY + "px";
-    }
-}
-
-// Para PC
-document.addEventListener("mousemove", (e) => {
-    moveAway(e.clientX, e.clientY);
-});
-
-// Para móvil
-document.addEventListener("touchmove", (e) => {
-    if(e.touches.length > 0){
-        moveAway(e.touches[0].clientX, e.touches[0].clientY);
+noBtn.addEventListener("click", () => {
+    if (noClickCount < messages.length - 1) {
+        noMessage.innerText = messages[noClickCount];
+        noClickCount++;
+    } else {
+        noMessage.innerHTML = "Vuelve a intentarlo 😾";
+        noBtn.style.display = "none";
     }
 });
 
