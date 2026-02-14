@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Una sorpresa para ti 💌</title>
+
+<!-- Fuente elegante cursiva bold -->
+<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
+
+<style>
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    overflow: hidden;
+    background: linear-gradient(135deg, #ff4d6d, #ff8fab);
+}
+
+/* Fondo corazones */
+#backgroundHearts {
+    position: fixed;
+    width: 100%;
+    height: 100vh;
+    top: 0;
+    left: 0;
+    z-index: 0;
+    overflow: hidden;
+}
+
+.bg-heart {
+    position: absolute;
+    color: rgba(255,255,255,0.4);
+    animation: floatUp linear forwards;
+}
+
+@keyframes floatUp {
+    from { transform: translateY(100vh); opacity: 1; }
+    to { transform: translateY(-10vh); opacity: 0; }
+}
+
+/* INTRO */
+#intro {
+    position: fixed;
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-size: 2.5em;
+    text-align: center;
+    z-index: 5;
+    background: white;
+    color: #e91e63;
+    font-family: 'Great Vibes', cursive;
+}
+
+#countdown {
+    font-size: 2em;
+    margin-top: 20px;
+    animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.2); }
+    100% { transform: scale(1); }
+}
+
+/* Pantallas */
+.screen {
+    display: none;
+    height: 100vh;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    z-index: 2;
+}
+
+.box {
+    background: rgba(255,255,255,0.85);
+    padding: 40px;
+    border-radius: 20px;
+    text-align: center;
+    max-width: 600px;
+    color: #333;
+}
+
+/* Botones */
+button {
+    padding: 15px 25px;
+    font-size: 18px;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    margin: 10px;
+    transition: 0.2s;
+}
+
+#yesBtn { background: #28c76f; color: white; }
+#noBtn  { background: #ff3b30; color: white; position: relative; }
+
+/* FINAL SCREEN */
+#successScreen {
+    background: radial-gradient(circle, #ff4d6d, #000000);
+    color: white;
+}
+
+/* Mensaje final */
+.final-message {
+    font-family: 'Great Vibes', cursive;
+    font-size: 2.5em;
+    opacity: 0;
+    transform: scale(0.5);
+    transition: all 1.5s ease;
+}
+
+.final-message.show {
+    opacity: 1;
+    transform: scale(1);
+}
+
+.glow {
+    animation: pulseGlow 2s infinite;
+}
+
+@keyframes pulseGlow {
+    0% { text-shadow: 0 0 10px white; }
+    50% { text-shadow: 0 0 30px #ff4d6d; }
+    100% { text-shadow: 0 0 10px white; }
+}
+
+/* Ajustes responsive */
+@media (max-width: 600px) {
+    .box {
+        padding: 20px;
+    }
+
+    #intro {
+        font-size: 1.8em;
+    }
+
+    .final-message {
+        font-size: 1.8em;
+    }
+}
+
+</style>
+</head>
+
+<body>
+
+<div id="backgroundHearts"></div>
+
+<!-- INTRO -->
+<div id="intro">
+    <div>💌 Tengo algo importante que preguntarte...</div>
+    <div id="countdown">3</div>
+</div>
+
+<!-- PREGUNTA -->
+<div class="screen" id="mainScreen">
+    <div class="box">
+        <h1 style="font-family:'Great Vibes', cursive;">¿Quieres ser mi Valentine? 💖</h1>
+        <button id="yesBtn">Sí 💘</button>
+        <button id="noBtn">No 😅</button>
+    </div>
+</div>
+
+<!-- FINAL -->
+<div class="screen" id="successScreen">
+    <div class="box" style="background: transparent; color:white;">
+        <div id="finalText" class="final-message glow">
+            Sabía que dirías que sí 🤭<br><br>
+
+            Así que te espero este Domingo 15 de Febrero<br>
+            en el mismo lugar de siempre<br>
+            a la hora de siempre ❤️<br><br>
+
+            Vamos a comer-nos 😏<br><br>
+
+            <span style="font-size:0.8em;">¡Ups! así no era 😅</span>
+        </div>
+    </div>
+</div>
+
+<script>
+
+/* Corazones fondo */
+const bgContainer = document.getElementById("backgroundHearts");
+
+function createBackgroundHeart() {
+    const heart = document.createElement("div");
+    heart.className = "bg-heart";
+    heart.innerText = "💖";
+    heart.style.left = Math.random() * 100 + "vw";
+    heart.style.fontSize = (15 + Math.random() * 30) + "px";
+    heart.style.animationDuration = (4 + Math.random() * 4) + "s";
+    bgContainer.appendChild(heart);
+
+    setTimeout(() => heart.remove(), 8000);
+}
+
+setInterval(createBackgroundHeart, 250);
+
+/* Cuenta regresiva */
+let count = 3;
+const countdown = document.getElementById("countdown");
+
+const timer = setInterval(() => {
+    count--;
+    countdown.innerText = count;
+
+    if (count === 0) {
+        clearInterval(timer);
+        document.getElementById("intro").style.display = "none";
+        document.getElementById("mainScreen").style.display = "flex";
+        document.body.style.overflow = "auto";
+    }
+}, 1000);
+
+/* Botón NO escapa */
+document.getElementById("noBtn").addEventListener("mouseover", function() {
+    const x = Math.random() * 300 - 150;
+    const y = Math.random() * 200 - 100;
+    this.style.transform = `translate(${x}px, ${y}px)`;
+});
+
+/* Botón SÍ */
+document.getElementById("yesBtn").addEventListener("click", function() {
+
+    document.getElementById("mainScreen").style.display = "none";
+    const success = document.getElementById("successScreen");
+    success.style.display = "flex";
+
+    setTimeout(() => {
+        document.getElementById("finalText").classList.add("show");
+    }, 100);
+
+    for (let i = 0; i < 50; i++) {
+        setTimeout(() => createBackgroundHeart(), i * 60);
+    }
+});
+
+</script>
+
+</body>
+</html>
+s
