@@ -5,11 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Una sorpresa para ti 💌</title>
 
-<!-- Fuente elegante cursiva bold -->
 <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
 
 <style>
-
 body {
     margin: 0;
     font-family: Arial, sans-serif;
@@ -17,7 +15,6 @@ body {
     background: linear-gradient(135deg, #ff4d6d, #ff8fab);
 }
 
-/* Fondo corazones */
 #backgroundHearts {
     position: fixed;
     width: 100%;
@@ -39,7 +36,6 @@ body {
     to { transform: translateY(-10vh); opacity: 0; }
 }
 
-/* INTRO */
 #intro {
     position: fixed;
     width: 100%;
@@ -68,7 +64,6 @@ body {
     100% { transform: scale(1); }
 }
 
-/* Pantallas */
 .screen {
     display: none;
     height: 100vh;
@@ -87,7 +82,6 @@ body {
     color: #333;
 }
 
-/* Botones */
 button {
     padding: 15px 25px;
     font-size: 18px;
@@ -95,19 +89,17 @@ button {
     border-radius: 12px;
     cursor: pointer;
     margin: 10px;
-    transition: 0.2s;
+    transition: 0.1s linear;
 }
 
 #yesBtn { background: #28c76f; color: white; }
 #noBtn  { background: #ff3b30; color: white; position: absolute; }
 
-/* FINAL SCREEN */
 #successScreen {
     background: radial-gradient(circle, #ff4d6d, #000000);
     color: white;
 }
 
-/* Mensaje final */
 .final-message {
     font-family: 'Great Vibes', cursive;
     font-size: 2.5em;
@@ -131,21 +123,11 @@ button {
     100% { text-shadow: 0 0 10px white; }
 }
 
-/* Ajustes responsive */
 @media (max-width: 600px) {
-    .box {
-        padding: 20px;
-    }
-
-    #intro {
-        font-size: 1.8em;
-    }
-
-    .final-message {
-        font-size: 1.8em;
-    }
+    .box { padding: 20px; }
+    #intro { font-size: 1.8em; }
+    .final-message { font-size: 1.8em; }
 }
-
 </style>
 </head>
 
@@ -153,13 +135,11 @@ button {
 
 <div id="backgroundHearts"></div>
 
-<!-- INTRO -->
 <div id="intro">
     <div>💌 Tengo algo importante que preguntarte...</div>
     <div id="countdown">3</div>
 </div>
 
-<!-- PREGUNTA -->
 <div class="screen" id="mainScreen">
     <div class="box">
         <h1 style="font-family:'Great Vibes', cursive;">¿Quieres ser mi Valentine? 💖</h1>
@@ -168,7 +148,6 @@ button {
     </div>
 </div>
 
-<!-- FINAL -->
 <div class="screen" id="successScreen">
     <div class="box" style="background: transparent; color:white;">
         <div id="finalText" class="final-message glow">
@@ -183,8 +162,6 @@ button {
 </div>
 
 <script>
-
-/* Corazones fondo */
 const bgContainer = document.getElementById("backgroundHearts");
 
 function createBackgroundHeart() {
@@ -204,6 +181,9 @@ setInterval(createBackgroundHeart, 250);
 /* Cuenta regresiva */
 let count = 3;
 const countdown = document.getElementById("countdown");
+const intro = document.getElementById("intro");
+const mainScreen = document.getElementById("mainScreen");
+const noBtn = document.getElementById("noBtn");
 
 const timer = setInterval(() => {
     count--;
@@ -211,44 +191,55 @@ const timer = setInterval(() => {
 
     if (count === 0) {
         clearInterval(timer);
-        document.getElementById("intro").style.display = "none";
-        document.getElementById("mainScreen").style.display = "flex";
+        intro.style.display = "none";
+        mainScreen.style.display = "flex";
         document.body.style.overflow = "auto";
-
-        // Inicializar posición del botón NO
-        const noBtn = document.getElementById("noBtn");
+        // posición inicial del NO
         noBtn.style.left = "50px";
         noBtn.style.top = "150px";
     }
 }, 1000);
 
-/* Botón NO que funciona en PC y móvil */
-const noBtn = document.getElementById("noBtn");
-
-function moveNoButton() {
+/* Botón NO sigue el dedo o cursor */
+function moveAway(targetX, targetY) {
     const btnRect = noBtn.getBoundingClientRect();
-    const padding = 20; // margen para que no se salga
+    const padding = 20;
 
-    const maxX = window.innerWidth - btnRect.width - padding;
-    const maxY = window.innerHeight - btnRect.height - padding;
+    let btnX = btnRect.left;
+    let btnY = btnRect.top;
 
-    const randomX = Math.random() * maxX;
-    const randomY = Math.random() * maxY;
+    let dx = btnX + btnRect.width/2 - targetX;
+    let dy = btnY + btnRect.height/2 - targetY;
+    let dist = Math.sqrt(dx*dx + dy*dy);
 
-    noBtn.style.left = randomX + 'px';
-    noBtn.style.top = randomY + 'px';
+    // Si está cerca, moverse
+    if(dist < 100) {
+        let moveX = (dx/dist) * 120; 
+        let moveY = (dy/dist) * 120;
+
+        let newX = Math.min(Math.max(btnX + moveX, padding), window.innerWidth - btnRect.width - padding);
+        let newY = Math.min(Math.max(btnY + moveY, padding), window.innerHeight - btnRect.height - padding);
+
+        noBtn.style.left = newX + "px";
+        noBtn.style.top = newY + "px";
+    }
 }
 
-// Eventos para escritorio y móvil
-noBtn.addEventListener("mouseover", moveNoButton);
-noBtn.addEventListener("touchstart", function(e) {
-    e.preventDefault(); // evitar click antes de mover
-    moveNoButton();
+// Para PC
+document.addEventListener("mousemove", (e) => {
+    moveAway(e.clientX, e.clientY);
+});
+
+// Para móvil
+document.addEventListener("touchmove", (e) => {
+    if(e.touches.length > 0){
+        moveAway(e.touches[0].clientX, e.touches[0].clientY);
+    }
 });
 
 /* Botón SÍ */
 document.getElementById("yesBtn").addEventListener("click", function() {
-    document.getElementById("mainScreen").style.display = "none";
+    mainScreen.style.display = "none";
     const success = document.getElementById("successScreen");
     success.style.display = "flex";
 
@@ -260,7 +251,6 @@ document.getElementById("yesBtn").addEventListener("click", function() {
         setTimeout(() => createBackgroundHeart(), i * 60);
     }
 });
-
 </script>
 
 </body>
