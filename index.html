@@ -99,7 +99,7 @@ button {
 }
 
 #yesBtn { background: #28c76f; color: white; }
-#noBtn  { background: #ff3b30; color: white; position: relative; }
+#noBtn  { background: #ff3b30; color: white; position: absolute; }
 
 /* FINAL SCREEN */
 #successScreen {
@@ -173,13 +173,10 @@ button {
     <div class="box" style="background: transparent; color:white;">
         <div id="finalText" class="final-message glow">
             Sabía que dirías que sí 🤭<br><br>
-
             Así que te espero este Domingo 15 de Febrero<br>
             en el mismo lugar de siempre<br>
             a la hora de siempre ❤️<br><br>
-
             Vamos a comer-nos 😏<br><br>
-
             <span style="font-size:0.8em;">¡Ups! así no era 😅</span>
         </div>
     </div>
@@ -217,19 +214,40 @@ const timer = setInterval(() => {
         document.getElementById("intro").style.display = "none";
         document.getElementById("mainScreen").style.display = "flex";
         document.body.style.overflow = "auto";
+
+        // Inicializar posición del botón NO
+        const noBtn = document.getElementById("noBtn");
+        noBtn.style.left = "50px";
+        noBtn.style.top = "150px";
     }
 }, 1000);
 
-/* Botón NO escapa */
-document.getElementById("noBtn").addEventListener("mouseover", function() {
-    const x = Math.random() * 300 - 150;
-    const y = Math.random() * 200 - 100;
-    this.style.transform = `translate(${x}px, ${y}px)`;
+/* Botón NO que funciona en PC y móvil */
+const noBtn = document.getElementById("noBtn");
+
+function moveNoButton() {
+    const btnRect = noBtn.getBoundingClientRect();
+    const padding = 20; // margen para que no se salga
+
+    const maxX = window.innerWidth - btnRect.width - padding;
+    const maxY = window.innerHeight - btnRect.height - padding;
+
+    const randomX = Math.random() * maxX;
+    const randomY = Math.random() * maxY;
+
+    noBtn.style.left = randomX + 'px';
+    noBtn.style.top = randomY + 'px';
+}
+
+// Eventos para escritorio y móvil
+noBtn.addEventListener("mouseover", moveNoButton);
+noBtn.addEventListener("touchstart", function(e) {
+    e.preventDefault(); // evitar click antes de mover
+    moveNoButton();
 });
 
 /* Botón SÍ */
 document.getElementById("yesBtn").addEventListener("click", function() {
-
     document.getElementById("mainScreen").style.display = "none";
     const success = document.getElementById("successScreen");
     success.style.display = "flex";
@@ -247,4 +265,3 @@ document.getElementById("yesBtn").addEventListener("click", function() {
 
 </body>
 </html>
-s
